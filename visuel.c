@@ -26,6 +26,40 @@ void CreerFenetre(SDL_Window ** pwindow)
 	
 }
 
+
+void plateau(SDL_Renderer ** prenderer)
+{
+
+	SDL_Rect rect;
+	SDL_Texture  *avatar;
+	SDL_Surface *image = NULL;
+	
+	
+	
+	image=IMG_Load("plateau2.png");
+	/* image=SDL_LoadBMP("loic.bmp"); fonction standard de la SDL2 */
+	if(!image) {
+		printf("IMG_Load: %s\n", IMG_GetError());
+	}
+
+	avatar = SDL_CreateTextureFromSurface(*prenderer, image);
+	SDL_FreeSurface(image);
+
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = 400;
+	rect.h = 500;
+	SDL_RenderCopy(*prenderer, avatar, NULL, &rect);
+	/* L'image a ete copiee dans le renderer qui sera plus tard affiche a l'ecran */
+	
+	SDL_RenderPresent(*prenderer);
+}
+
+
+
+
+
+
 void principal()
 {
 	int running, width, height;
@@ -41,6 +75,7 @@ void principal()
  
 	CreerFenetre(&window);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
+    plateau(&renderer);
 
 	if (renderer == 0) {
 		 fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
