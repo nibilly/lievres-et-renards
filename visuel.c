@@ -1,6 +1,56 @@
 #include <stdio.h>
 #include "visuel.h"
 
+void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
+{
+	SDL_Rect rect;
+	SDL_Texture  *avatar;
+	SDL_Surface *image = NULL;
+	int iW, iH;
+	SDL_Color     couleur  = {255, 255, 255, 255};
+	SDL_Surface * surf     = TTF_RenderText_Blended(font, "niveau de 0 à 2 : ", couleur);
+	SDL_Texture * texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
+	SDL_QueryTexture(texttext, NULL, NULL, &iW, &iH);
+	SDL_RenderFillRect(*prenderer, &rect);
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = 200;
+	rect.h = 30;
+	SDL_RenderCopy(*prenderer, texttext, NULL, &rect);
+	
+	SDL_SetRenderDrawColor(*prenderer, 255, 255, 0, 0);
+	rect.x = 100;
+	rect.y = 100;
+	rect.w = rect.h = 250;
+	SDL_RenderFillRect(*prenderer, &rect );
+	
+	image=IMG_Load("fd.jpg");
+	/* image=SDL_LoadBMP("loic.bmp"); fonction standard de la SDL2 */
+	if(!image) {
+		printf("IMG_Load: %s\n", IMG_GetError());
+	}
+
+	avatar = SDL_CreateTextureFromSurface(*prenderer, image);
+	SDL_FreeSurface(image);
+
+	rect.x = 150;
+	rect.y = 150;
+	rect.w = rect.h = 200;
+	SDL_RenderCopy(*prenderer, avatar, NULL, &rect);
+	/* L'image a ete copiee dans le renderer qui sera plus tard affiche a l'ecran */
+	
+	SDL_RenderPresent(*prenderer);
+}
+
+void fenetreNiveau(SDL_Window ** pwindow)
+{
+	*pwindow = SDL_CreateWindow("Niveau", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 400, 0);
+	if (*pwindow == 0)
+	{
+		fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
+	}
+}
+
 void CreerFenetre(SDL_Window ** pwindow)
 {
 	int flags=IMG_INIT_JPG|IMG_INIT_PNG;
@@ -32,16 +82,25 @@ void principal()
 	SDL_Event event;
 	SDL_Window   * window;
 	SDL_Renderer *renderer;
+	TTF_Font * font;
+	
 	running = 1;
 	if (SDL_Init(SDL_INIT_VIDEO) == -1)
 	{
 		fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 		return;
 	}
+	if(TTF_Init() == -1)
+	{
+		fprintf(stderr, "Erreur d'initialisation de TTF_Init : %s\n", TTF_GetError());
+		exit(EXIT_FAILURE);
+	}
+	font = TTF_OpenFont("fake.receipt.ttf", 30);
  
-	CreerFenetre(&window);
+	fenetreNiveau(&window);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
-
+	remplirFenetreN(&renderer, font);
+	
 	if (renderer == 0) {
 		 fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 		 SDL_DestroyWindow(window);
@@ -80,7 +139,9 @@ void principal()
 		SDL_Delay(1); /*delai minimal*/
 	}
 	
+	TTF_CloseFont(font);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	TTF_Quit();
 	SDL_Quit();
 }
