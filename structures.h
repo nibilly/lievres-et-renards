@@ -41,4 +41,10 @@ typedef struct {
     int nbDeplacements;
 }jeu_t;
 
+typedef struct {
+    lapin_t * lapins;
+    renard_t * renards;
+    champignon_t * champignons;
+}jeu_t_t;
+
 #endif
