@@ -10,32 +10,7 @@ int main()
     int niveau = 2;/*de 0 à n-1*/
     jeu = declarerJeu();
     initialiserNiveau(jeu, niveau);
-    /*jeu->renards[1].orientation = HORIZONTALE;
-    jeu->renards[0].orientation = HORIZONTALE;
     
-    deplacer(jeu, RENARD, 1, 3, 1);*//*dabord la tete vers le haut ou la droite*/
-    /*deplacer(jeu, RENARD, 1, 3, 0);
-    deplacer(jeu, RENARD, 0, 1, 4);
-    deplacer(jeu, RENARD, 0, 1, 3);*/
-    /*deplacer(jeu, CHAMPIGNON, 0, 1, 1);
-    */
-    /*jeu->lapins[0].position->x = 0;
-    jeu->lapins[0].position->y = 0;
-    strcpy(jeu->plateau[0][0], "L0");
-    jeu->lapins[1].position->x = 1;
-    jeu->lapins[1].position->y = 1;
-    strcpy(jeu->plateau[1][1], "L1");*/
-    /*deplacer(jeu, LAPIN, 1, 3, 3);
-    deplacer(jeu, LAPIN, 2, 0, 1);*/
-    /*if ( jeu->lapins[2].estSauve == 0)*//*par defaut == 0*/ 
-    /*{
-        printf("ok");
-    }
-    else
-    {
-        printf("nop");
-    }
-    */
     moteurjeu(jeu, niveau);
     /*jeu->lapins[0].position->x = 0;
     jeu->lapins[0].position->y = 0;
