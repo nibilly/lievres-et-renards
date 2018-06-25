@@ -44,7 +44,7 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 
 void fenetreNiveau(SDL_Window ** pwindow)
 {
-	*pwindow = SDL_CreateWindow("Niveau", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 400, 0);
+	*pwindow = SDL_CreateWindow("Niveau", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 600, 0);
 	if (*pwindow == 0)
 	{
 		fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
@@ -79,27 +79,51 @@ void CreerFenetre(SDL_Window ** pwindow)
 
 void plateau(SDL_Renderer ** prenderer)
 {
+/*initialisation*/
+	
+	SDL_Rect *rect;
 
-	SDL_Rect rect;
+	
 	SDL_Texture  *avatar;
-	SDL_Surface *image = NULL;
+
+	
+	SDL_Surface *plateau = NULL;
+	SDL_Surface *lapin0 = NULL;
 	
 	
-	
-	image=IMG_Load("plateau2.png");
+/*chargement des images avec vérifications*/	
+	plateau=IMG_Load("plateau.png");
 	/* image=SDL_LoadBMP("loic.bmp"); fonction standard de la SDL2 */
-	if(!image) {
+	lapin0=IMG_Load("lapin0.png");
+	if(!plateau||!lapin0) {
 		printf("IMG_Load: %s\n", IMG_GetError());
 	}
+	
 
-	avatar = SDL_CreateTextureFromSurface(*prenderer, image);
-	SDL_FreeSurface(image);
-
-	rect.x = 0;
-	rect.y = 0;
-	rect.w = 400;
-	rect.h = 500;
-	SDL_RenderCopy(*prenderer, avatar, NULL, &rect);
+	avatar = SDL_CreateTextureFromSurface(*prenderer, plateau);
+	SDL_FreeSurface(plateau);
+	/*avatarPlateau = SDL_CreateTextureFromSurface(*prenderer, lapin0);
+	SDL_FreeSurface(lapin0);*/
+	
+	rectPlateau.x = 0;
+	rectPlateau.y = 100;
+	rectPlateau.w = 500;
+	rectPlateau.h = 500;
+	SDL_RenderCopy(*prenderer, avatar, NULL, &rectPlateau);
+	
+	
+	
+	
+	
+	
+	
+	avatar = SDL_CreateTextureFromSurface(*prenderer, lapin0);
+	SDL_FreeSurface(lapin0);
+	rectLapin0.x= 0;
+	rectLapin0.y = 100;
+	rectLapin0.w=100;
+	rectLapin0.h=100;
+	SDL_RenderCopy(*prenderer, avatar, NULL, &rectLapin0);
 	/* L'image a ete copiee dans le renderer qui sera plus tard affiche a l'ecran */
 	
 	SDL_RenderPresent(*prenderer);
