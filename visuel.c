@@ -133,13 +133,8 @@ void principal()
  
 	fenetreNiveau(&window);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
-<<<<<<< HEAD
-	remplirFenetreN(&renderer, font);
-	
-=======
+	/*remplirFenetreN(&renderer, font);*/
     plateau(&renderer);
-
->>>>>>> ba5c69b7c129e37b146790d4609ebfa79ee35656
 	if (renderer == 0) {
 		 fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 		 SDL_DestroyWindow(window);
