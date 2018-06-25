@@ -1,16 +1,15 @@
 #include <stdio.h>
+#include <time.h>
 #include "visuel.h"
-
+#include "initialisation.h"
 
 void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 {
 	SDL_Rect *rect;
-	SDL_Texture  *avatar;
-	SDL_Surface *image = NULL;
 	int iW, iH, i, j;
 	SDL_Color     couleur  = {0, 0, 0, 255};
 	SDL_Surface * surf;
-	SDL_Texture * texttext;
+	SDL_Texture * texture;
 	char num[5];
 	
 	SDL_SetRenderDrawColor(*prenderer, 255, 255, 255, 0);
@@ -23,32 +22,33 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	free(rect);
 	
 	surf     = TTF_RenderText_Blended(font, "Selectionnez un niveau : ", couleur);
-	texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
-	SDL_QueryTexture(texttext, NULL, NULL, &iW, &iH);
+	texture = SDL_CreateTextureFromSurface(*prenderer, surf);
+	SDL_QueryTexture(texture, NULL, NULL, &iW, &iH);
 	rect = malloc(sizeof(SDL_Rect));
 	SDL_RenderFillRect(*prenderer, rect);
 	rect->x = 0;
 	rect->y = 0;
-	rect->w = 0+iW;
-	rect->h = 0+iH;
-	SDL_RenderCopy(*prenderer, texttext, NULL, rect);
+	rect->w = iW;
+	rect->h = iH;
+	SDL_RenderCopy(*prenderer, texture, NULL, rect);
 	free(rect);
-		
-	for(i =1; i<7; i++)
+	
+	for(i =0; i<6; i++)
 	{
-		for(j=0; j<10; j++)
+		for(j=1; j<11; j++)
 		{
 			sprintf(num, "%d", i*10+j);
 			surf     = TTF_RenderText_Blended(font, num, couleur);
-			texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
-			SDL_QueryTexture(texttext, NULL, NULL, &iW, &iH);
+			texture = SDL_CreateTextureFromSurface(*prenderer, surf);
+			SDL_QueryTexture(texture, NULL, NULL, &iW, &iH);
 			rect = malloc(sizeof(SDL_Rect));
+			SDL_SetRenderDrawColor(*prenderer, 0, 150, 150, 255);
+			rect->x = 30*j+30;
+			rect->y = 30*(i+1)+30;
+			rect->w = iW;
+			rect->h = iH;
 			SDL_RenderFillRect(*prenderer, rect);
-			rect->x = 40*j;
-			rect->y = 40*i;
-			rect->w = 40*j+iW;
-			rect->h = 40*i+iH;
-			SDL_RenderCopy(*prenderer, texttext, NULL, rect);
+			SDL_RenderCopy(*prenderer, texture, NULL, rect);
 			free(rect);
 		}
 	}
@@ -66,60 +66,61 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	rect.w = rect.h = 200;
 	SDL_RenderCopy(*prenderer, avatar, NULL, &rect);*/
 	
+	SDL_FreeSurface(surf);
+	SDL_DestroyTexture(texture);
 	SDL_RenderPresent(*prenderer);
 }
 
-void fenetreNiveau(SDL_Window ** pwindow)
+void fenetre(SDL_Window ** pwindow, int x, int y)
 {
-	*pwindow = SDL_CreateWindow("Niveau", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 500, 600, 0);
+	*pwindow = SDL_CreateWindow("Niveau", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, x, y, 0);
 	if (*pwindow == 0)
 	{
 		fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 	}
 }
 
-void CreerFenetre(SDL_Window ** pwindow)
+void cliqueSourisN(int x, int y, jeu_t * jeu, SDL_Window ** pwindow, SDL_Renderer ** prenderer, SDL_Window ** pwindow2, SDL_Renderer ** prenderer2)
 {
-	int flags=IMG_INIT_JPG|IMG_INIT_PNG;
-	int initted= 0;
-
-	initted = IMG_Init(flags);
-
-	if((initted&flags) != flags)
+	int niveau, dizaine=0, unite=0;
+	SDL_DestroyRenderer(*prenderer);
+	SDL_DestroyWindow(*pwindow);
+	if(x>30 && x<360 && y>60 && y<240)
 	{
-		printf("IMG_Init: Impossible d'initialiser le support des formats JPG et PNG requis!\n");
-		printf("IMG_Init: %s\n", IMG_GetError());
+		x-=30;
+		while(x>29)
+		{
+			unite++;
+			x-=30;
+		}
+		y-=60;
+		while(y>29)
+		{
+			dizaine++;
+			y-=30;
+		}
+		niveau = dizaine*10+unite;
+		initialiserNiveau(jeu, niveau-1);
+		
+		fenetre(pwindow2, 500, 600);
+	    *prenderer2 = SDL_CreateRenderer(*pwindow2, -1, SDL_RENDERER_ACCELERATED);
+		plateau(prenderer2, jeu);
 	}
-
-	*pwindow = SDL_CreateWindow("SDL2 Programme 0.1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		        400, 500,
-		        SDL_WINDOW_RESIZABLE);
-
-	if (*pwindow == 0)
-	{
-		fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
-		/* on peut aussi utiliser SLD_Log() */
-	}
-	
 }
-
 
 void plateau(SDL_Renderer ** prenderer, jeu_t * jeu)
 {
 /*initialisation*/
 	
 	int ligne, colonne;
+
 	int cmpt0 = 0;
 	int cmpt1= 0;
+
 	SDL_Rect *rect;
-
-	
 	SDL_Texture  *avatar;
-
-	
 	SDL_Surface *plateau = NULL;
 	SDL_Surface *figurine = NULL;
-	
 	
 /*chargement des images avec vérifications*/	
 	plateau=IMG_Load("plateau.png");
@@ -136,19 +137,10 @@ void plateau(SDL_Renderer ** prenderer, jeu_t * jeu)
 	rect->h = 500;
 	SDL_RenderCopy(*prenderer, avatar, NULL, rect);
 	free(rect);
-	
-	
-	
-	
 	for(ligne=0;ligne<=4;ligne++)
 	{
 		for(colonne=0;colonne<=4;colonne++)
-		{
-			
-			
-			
-			
-			
+		{			
 			if( strcmp(jeu->plateau[ligne][colonne], "L0")==0 )
 			{
 				figurine=IMG_Load("lapin0.png");
@@ -290,8 +282,11 @@ void principal(jeu_t * jeu)
 	int running, width, height;
 	SDL_Event event;
 	SDL_Window   * window;
-	SDL_Renderer *renderer;
+	SDL_Window   * window2;
+	SDL_Renderer * renderer;
+	SDL_Renderer * renderer2;
 	TTF_Font * font;
+	etat_fenetre_t etatFenetre;
 	
 	running = 1;
 	if (SDL_Init(SDL_INIT_VIDEO) == -1)
@@ -305,14 +300,15 @@ void principal(jeu_t * jeu)
 		exit(EXIT_FAILURE);
 	}
 	font = TTF_OpenFont("fake.receipt.ttf", 15);
- 
-	fenetreNiveau(&window);
+	etatFenetre = NIVEAUX;
+	fenetre(&window, 390, 270);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
-	/*remplirFenetreN(&renderer, font);*/
-    plateau(&renderer, jeu);
+	remplirFenetreN(&renderer, font);
 	if (renderer == 0) {
 		 fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 		 SDL_DestroyWindow(window);
+		 TTF_CloseFont(font);
+		 TTF_Quit();
 		 SDL_Quit();
 	}
 
@@ -339,6 +335,14 @@ void principal(jeu_t * jeu)
 					break;
 				case SDL_MOUSEBUTTONDOWN:
 					printf("Appui :%d %d\n", event.button.x, event.button.y);
+					switch(etatFenetre)
+					{
+						case JEU:
+							break;
+						case NIVEAUX:
+							cliqueSourisN(event.button.x, event.button.y, jeu, &window, &renderer, &window2, &renderer2);
+							break;
+					}
 					break;
 				case SDL_QUIT :
 					printf("on quitte\n");
@@ -349,8 +353,8 @@ void principal(jeu_t * jeu)
 	}
 	
 	TTF_CloseFont(font);
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer2);
+	SDL_DestroyWindow(window2);
 	TTF_Quit();
 	SDL_Quit();
 }
