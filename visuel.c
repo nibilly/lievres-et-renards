@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "visuel.h"
+#include "initialisation.h"
 
 void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 {
@@ -31,8 +32,6 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	rect->h = iH;
 	SDL_RenderCopy(*prenderer, texture, NULL, rect);
 	free(rect);
-	
-	
 	
 	for(i =0; i<6; i++)
 	{
@@ -72,18 +71,20 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	SDL_RenderPresent(*prenderer);
 }
 
-void fenetreNiveau(SDL_Window ** pwindow)
+void fenetre(SDL_Window ** pwindow, int x, int y)
 {
-	*pwindow = SDL_CreateWindow("Niveau", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 390, 270, 0);
+	*pwindow = SDL_CreateWindow("Niveau", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, x, y, 0);
 	if (*pwindow == 0)
 	{
 		fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 	}
 }
 
-void cliqueSourisN(int x, int y)
+void cliqueSourisN(int x, int y, jeu_t * jeu, SDL_Window ** pwindow, SDL_Renderer ** prenderer, SDL_Window ** pwindow2, SDL_Renderer ** prenderer2)
 {
 	int niveau, dizaine=0, unite=0;
+	SDL_DestroyRenderer(*prenderer);
+	SDL_DestroyWindow(*pwindow);
 	if(x>30 && x<360 && y>60 && y<240)
 	{
 		x-=30;
@@ -92,7 +93,6 @@ void cliqueSourisN(int x, int y)
 			unite++;
 			x-=30;
 		}
-		
 		y-=60;
 		while(y>29)
 		{
@@ -100,69 +100,101 @@ void cliqueSourisN(int x, int y)
 			y-=30;
 		}
 		niveau = dizaine*10+unite;
+		initialiserNiveau(jeu, niveau-1);
+		
+		fenetre(pwindow2, 500, 600);
+	    *prenderer2 = SDL_CreateRenderer(*pwindow2, -1, SDL_RENDERER_ACCELERATED);
+		plateau(prenderer2, jeu);
 	}
 }
 
-void CreerFenetre(SDL_Window ** pwindow)
+void plateau(SDL_Renderer ** prenderer, jeu_t * jeu)
 {
-	int flags=IMG_INIT_JPG|IMG_INIT_PNG;
-	int initted= 0;
-
-	initted = IMG_Init(flags);
-
-	if((initted&flags) != flags)
-	{
-		printf("IMG_Init: Impossible d'initialiser le support des formats JPG et PNG requis!\n");
-		printf("IMG_Init: %s\n", IMG_GetError());
-	}
-
-	*pwindow = SDL_CreateWindow("SDL2 Programme 0.1", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		        400, 500,
-		        SDL_WINDOW_RESIZABLE);
-
-	if (*pwindow == 0)
-	{
-		fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
-		/* on peut aussi utiliser SLD_Log() */
-	}
+/*initialisation*/
 	
-}
-
-
-void plateau(SDL_Renderer ** prenderer)
-{
-
-	SDL_Rect rect;
+	int ligne, colonne;
+	SDL_Rect *rect;
 	SDL_Texture  *avatar;
-	SDL_Surface *image = NULL;
+	SDL_Surface *plateau = NULL;
+	SDL_Surface *lapin = NULL;
 	
-	
-	
-	image=IMG_Load("plateau2.png");
-	/* image=SDL_LoadBMP("loic.bmp"); fonction standard de la SDL2 */
-	if(!image) {
+/*chargement des images avec vérifications*/	
+	plateau=IMG_Load("plateau.png");
+	if(!plateau) {
 		printf("IMG_Load: %s\n", IMG_GetError());
 	}
-
-	avatar = SDL_CreateTextureFromSurface(*prenderer, image);
-	SDL_FreeSurface(image);
-
-	rect.x = 0;
-	rect.y = 0;
-	rect.w = 400;
-	rect.h = 500;
-	SDL_RenderCopy(*prenderer, avatar, NULL, &rect);
+	avatar = SDL_CreateTextureFromSurface(*prenderer, plateau);
+	SDL_FreeSurface(plateau);
+	
+	rect = malloc(sizeof(SDL_Rect));
+	rect->x = 0;
+	rect->y = 100;
+	rect->w = 500;
+	rect->h = 500;
+	SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+	free(rect);
+	for(ligne=0;ligne<=4;ligne++)
+	{
+		for(colonne=0;colonne<=4;colonne++)
+		{			
+			if( strcmp(jeu->plateau[ligne][colonne], "L0")==0 )
+			{
+				lapin=IMG_Load("lapin0.png");
+				avatar = SDL_CreateTextureFromSurface(*prenderer, lapin);
+				SDL_FreeSurface(lapin);
+				
+				rect = malloc(sizeof(SDL_Rect));
+				rect->x= ligne*100;
+				rect->y = 100 + colonne*100;
+				rect->w=100;
+				rect->h=100;
+				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+				free(rect);
+			}
+			else if( strcmp(jeu->plateau[ligne][colonne], "L1")==0 )
+			{
+				lapin=IMG_Load("lapin1.png");
+				avatar = SDL_CreateTextureFromSurface(*prenderer, lapin);
+				SDL_FreeSurface(lapin);
+				
+				rect = malloc(sizeof(SDL_Rect));
+				rect->x= ligne*100;
+				rect->y = 100 + colonne*100;
+				rect->w=100;
+				rect->h=100;
+				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+				free(rect);
+			}
+			else if (strcmp(jeu->plateau[ligne][colonne], "L2")==0 )
+			{
+				lapin=IMG_Load("lapin2.png");
+				avatar = SDL_CreateTextureFromSurface(*prenderer, lapin);
+				SDL_FreeSurface(lapin);
+				
+				rect = malloc(sizeof(SDL_Rect));
+				rect->x= ligne*100;
+				rect->y = 100 + colonne*100;
+				rect->w=100;
+				rect->h=100;
+				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+				free(rect);
+			}	
+			
+		}
+	}
 	/* L'image a ete copiee dans le renderer qui sera plus tard affiche a l'ecran */
 	
 	SDL_RenderPresent(*prenderer);
 }
 
-void principal()
+void principal(jeu_t * jeu)
 {
 	int running, width, height;
 	SDL_Event event;
 	SDL_Window   * window;
-	SDL_Renderer *renderer;
+	SDL_Window   * window2;
+	SDL_Renderer * renderer;
+	SDL_Renderer * renderer2;
 	TTF_Font * font;
 	etat_fenetre_t etatFenetre;
 	
@@ -179,10 +211,9 @@ void principal()
 	}
 	font = TTF_OpenFont("fake.receipt.ttf", 15);
 	etatFenetre = NIVEAUX;
-	fenetreNiveau(&window);
+	fenetre(&window, 390, 270);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
 	remplirFenetreN(&renderer, font);
-    /*plateau(&renderer);*/
 	if (renderer == 0) {
 		 fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 		 SDL_DestroyWindow(window);
@@ -219,7 +250,7 @@ void principal()
 						case JEU:
 							break;
 						case NIVEAUX:
-							cliqueSourisN(event.button.x, event.button.y);
+							cliqueSourisN(event.button.x, event.button.y, jeu, &window, &renderer, &window2, &renderer2);
 							break;
 					}
 					break;
@@ -232,8 +263,8 @@ void principal()
 	}
 	
 	TTF_CloseFont(font);
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer2);
+	SDL_DestroyWindow(window2);
 	TTF_Quit();
 	SDL_Quit();
 }
