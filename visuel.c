@@ -6,10 +6,11 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	SDL_Rect *rect;
 	SDL_Texture  *avatar;
 	SDL_Surface *image = NULL;
-	int iW, iH;
+	int iW, iH, i, j;
 	SDL_Color     couleur  = {0, 0, 0, 255};
 	SDL_Surface * surf;
 	SDL_Texture * texttext;
+	char num[5];
 	
 	SDL_SetRenderDrawColor(*prenderer, 255, 255, 255, 0);
 	rect = malloc(sizeof(SDL_Rect));
@@ -32,19 +33,24 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	SDL_RenderCopy(*prenderer, texttext, NULL, rect);
 	free(rect);
 		
-	
-	surf     = TTF_RenderText_Blended(font, "1-9", couleur);
-	texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
-	SDL_QueryTexture(texttext, NULL, NULL, &iW, &iH);
-	rect = malloc(sizeof(SDL_Rect));
-	SDL_RenderFillRect(*prenderer, rect);
-	rect->x = 30;
-	rect->y = 30;
-	rect->w = 30+iW;
-	rect->h = 30+iH;
-	SDL_RenderCopy(*prenderer, texttext, NULL, rect);
-	free(rect);
-	
+	for(i =1; i<7; i++)
+	{
+		for(j=0; j<10; j++)
+		{
+			sprintf(num, "%d", i*10+j);
+			surf     = TTF_RenderText_Blended(font, num, couleur);
+			texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
+			SDL_QueryTexture(texttext, NULL, NULL, &iW, &iH);
+			rect = malloc(sizeof(SDL_Rect));
+			SDL_RenderFillRect(*prenderer, rect);
+			rect->x = 40*j;
+			rect->y = 40*i;
+			rect->w = 40*j+iW;
+			rect->h = 40*i+iH;
+			SDL_RenderCopy(*prenderer, texttext, NULL, rect);
+			free(rect);
+		}
+	}
 	/*
 	image=IMG_Load("fd.jpg");
 	if(!image) {
@@ -148,8 +154,8 @@ void principal()
  
 	fenetreNiveau(&window);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
-	/*remplirFenetreN(&renderer, font);*/
-    plateau(&renderer);
+	remplirFenetreN(&renderer, font);
+    /*plateau(&renderer);*/
 	if (renderer == 0) {
 		 fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 		 SDL_DestroyWindow(window);
