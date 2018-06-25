@@ -3,29 +3,50 @@
 
 void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 {
-	SDL_Rect rect;
+	SDL_Rect *rect;
 	SDL_Texture  *avatar;
 	SDL_Surface *image = NULL;
 	int iW, iH;
-	SDL_Color     couleur  = {255, 255, 255, 255};
-	SDL_Surface * surf     = TTF_RenderText_Blended(font, "niveau de 0 à 2 : ", couleur);
-	SDL_Texture * texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
+	SDL_Color     couleur  = {0, 0, 0, 255};
+	SDL_Surface * surf;
+	SDL_Texture * texttext;
+	
+	SDL_SetRenderDrawColor(*prenderer, 255, 255, 255, 0);
+	rect = malloc(sizeof(SDL_Rect));
+	rect->x = 0;
+	rect->y = 0;
+	rect->w = 800;
+	rect->h = 400;
+	SDL_RenderFillRect(*prenderer, rect );
+	free(rect);
+	
+	surf     = TTF_RenderText_Blended(font, "Selectionnez un niveau : ", couleur);
+	texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
 	SDL_QueryTexture(texttext, NULL, NULL, &iW, &iH);
-	SDL_RenderFillRect(*prenderer, &rect);
-	rect.x = 0;
-	rect.y = 0;
-	rect.w = 200;
-	rect.h = 30;
-	SDL_RenderCopy(*prenderer, texttext, NULL, &rect);
+	rect = malloc(sizeof(SDL_Rect));
+	SDL_RenderFillRect(*prenderer, rect);
+	rect->x = 0;
+	rect->y = 0;
+	rect->w = 0+iW;
+	rect->h = 0+iH;
+	SDL_RenderCopy(*prenderer, texttext, NULL, rect);
+	free(rect);
+		
 	
-	SDL_SetRenderDrawColor(*prenderer, 255, 255, 0, 0);
-	rect.x = 100;
-	rect.y = 100;
-	rect.w = rect.h = 250;
-	SDL_RenderFillRect(*prenderer, &rect );
+	surf     = TTF_RenderText_Blended(font, "1-9", couleur);
+	texttext = SDL_CreateTextureFromSurface(*prenderer, surf);
+	SDL_QueryTexture(texttext, NULL, NULL, &iW, &iH);
+	rect = malloc(sizeof(SDL_Rect));
+	SDL_RenderFillRect(*prenderer, rect);
+	rect->x = 30;
+	rect->y = 30;
+	rect->w = 30+iW;
+	rect->h = 30+iH;
+	SDL_RenderCopy(*prenderer, texttext, NULL, rect);
+	free(rect);
 	
+	/*
 	image=IMG_Load("fd.jpg");
-	/* image=SDL_LoadBMP("loic.bmp"); fonction standard de la SDL2 */
 	if(!image) {
 		printf("IMG_Load: %s\n", IMG_GetError());
 	}
@@ -36,8 +57,7 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	rect.x = 150;
 	rect.y = 150;
 	rect.w = rect.h = 200;
-	SDL_RenderCopy(*prenderer, avatar, NULL, &rect);
-	/* L'image a ete copiee dans le renderer qui sera plus tard affiche a l'ecran */
+	SDL_RenderCopy(*prenderer, avatar, NULL, &rect);*/
 	
 	SDL_RenderPresent(*prenderer);
 }
@@ -105,11 +125,6 @@ void plateau(SDL_Renderer ** prenderer)
 	SDL_RenderPresent(*prenderer);
 }
 
-
-
-
-
-
 void principal()
 {
 	int running, width, height;
@@ -129,7 +144,7 @@ void principal()
 		fprintf(stderr, "Erreur d'initialisation de TTF_Init : %s\n", TTF_GetError());
 		exit(EXIT_FAILURE);
 	}
-	font = TTF_OpenFont("fake.receipt.ttf", 30);
+	font = TTF_OpenFont("fake.receipt.ttf", 15);
  
 	fenetreNiveau(&window);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
