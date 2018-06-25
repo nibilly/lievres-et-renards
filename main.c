@@ -7,13 +7,15 @@
 
 int main()
 {
-	principal();
-    /*jeu_t * jeu;
-    int niveau = 2;*//*de 0 à n-1*/
-    /*jeu = declarerJeu();
+	
+    jeu_t * jeu;
+    int niveau = 2; /*de 0 à n-1*/
+    jeu = declarerJeu();
     initialiserNiveau(jeu, niveau);
     
-    moteurjeu(jeu, niveau);*/
+    principal(jeu);
+    
+    /*moteurjeu(jeu, niveau);*/
     /*jeu->lapins[0].position->x = 0;
     jeu->lapins[0].position->y = 0;
     jeu->renards[1].tete->x = 1;
@@ -33,7 +35,7 @@ int main()
     printf("%d\n", jeu->champignons[2].position->y);
     afficher(jeu);
     */
-    /*liberer(jeu);*/
+    liberer(jeu);
     
     return 0;
 }

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "visuel.h"
 
+
 void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 {
 	SDL_Rect *rect;
@@ -103,9 +104,11 @@ void CreerFenetre(SDL_Window ** pwindow)
 }
 
 
-void plateau(SDL_Renderer ** prenderer)
+void plateau(SDL_Renderer ** prenderer, jeu_t * jeu)
 {
 /*initialisation*/
+	
+	int ligne, colonne;
 	
 	SDL_Rect *rect;
 
@@ -114,48 +117,88 @@ void plateau(SDL_Renderer ** prenderer)
 
 	
 	SDL_Surface *plateau = NULL;
-	SDL_Surface *lapin0 = NULL;
+	SDL_Surface *lapin = NULL;
 	
 	
 /*chargement des images avec vérifications*/	
 	plateau=IMG_Load("plateau.png");
-	/* image=SDL_LoadBMP("loic.bmp"); fonction standard de la SDL2 */
-	lapin0=IMG_Load("lapin0.png");
-	if(!plateau||!lapin0) {
+	if(!plateau) {
 		printf("IMG_Load: %s\n", IMG_GetError());
 	}
-	
-
 	avatar = SDL_CreateTextureFromSurface(*prenderer, plateau);
 	SDL_FreeSurface(plateau);
-	/*avatarPlateau = SDL_CreateTextureFromSurface(*prenderer, lapin0);
-	SDL_FreeSurface(lapin0);*/
 	
-	rectPlateau.x = 0;
-	rectPlateau.y = 100;
-	rectPlateau.w = 500;
-	rectPlateau.h = 500;
-	SDL_RenderCopy(*prenderer, avatar, NULL, &rectPlateau);
-	
-	
+	rect = malloc(sizeof(SDL_Rect));
+	rect->x = 0;
+	rect->y = 100;
+	rect->w = 500;
+	rect->h = 500;
+	SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+	free(rect);
 	
 	
 	
 	
-	
-	avatar = SDL_CreateTextureFromSurface(*prenderer, lapin0);
-	SDL_FreeSurface(lapin0);
-	rectLapin0.x= 0;
-	rectLapin0.y = 100;
-	rectLapin0.w=100;
-	rectLapin0.h=100;
-	SDL_RenderCopy(*prenderer, avatar, NULL, &rectLapin0);
+	for(ligne=0;ligne<=4;ligne++)
+	{
+		for(colonne=0;colonne<=4;colonne++)
+		{
+			
+			
+			
+			
+			
+			if( strcmp(jeu->plateau[ligne][colonne], "L0")==0 )
+			{
+				lapin=IMG_Load("lapin0.png");
+				avatar = SDL_CreateTextureFromSurface(*prenderer, lapin);
+				SDL_FreeSurface(lapin);
+				
+				rect = malloc(sizeof(SDL_Rect));
+				rect->x= ligne*100;
+				rect->y = 100 + colonne*100;
+				rect->w=100;
+				rect->h=100;
+				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+				free(rect);
+			}
+			else if( strcmp(jeu->plateau[ligne][colonne], "L1")==0 )
+			{
+				lapin=IMG_Load("lapin1.png");
+				avatar = SDL_CreateTextureFromSurface(*prenderer, lapin);
+				SDL_FreeSurface(lapin);
+				
+				rect = malloc(sizeof(SDL_Rect));
+				rect->x= ligne*100;
+				rect->y = 100 + colonne*100;
+				rect->w=100;
+				rect->h=100;
+				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+				free(rect);
+			}
+			else if (strcmp(jeu->plateau[ligne][colonne], "L2")==0 )
+			{
+				lapin=IMG_Load("lapin2.png");
+				avatar = SDL_CreateTextureFromSurface(*prenderer, lapin);
+				SDL_FreeSurface(lapin);
+				
+				rect = malloc(sizeof(SDL_Rect));
+				rect->x= ligne*100;
+				rect->y = 100 + colonne*100;
+				rect->w=100;
+				rect->h=100;
+				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+				free(rect);
+			}	
+			
+		}
+	}
 	/* L'image a ete copiee dans le renderer qui sera plus tard affiche a l'ecran */
 	
 	SDL_RenderPresent(*prenderer);
 }
 
-void principal()
+void principal(jeu_t * jeu)
 {
 	int running, width, height;
 	SDL_Event event;
@@ -178,8 +221,8 @@ void principal()
  
 	fenetreNiveau(&window);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED );
-	remplirFenetreN(&renderer, font);
-    /*plateau(&renderer);*/
+	/*remplirFenetreN(&renderer, font);*/
+    plateau(&renderer, jeu);
 	if (renderer == 0) {
 		 fprintf(stderr, "Erreur d'initialisation de la SDL : %s\n", SDL_GetError());
 		 SDL_DestroyWindow(window);
