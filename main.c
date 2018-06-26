@@ -9,9 +9,7 @@ int main()
 {
 	
     jeu_t * jeu;
-    int niveau = 2; /*de 0 à n-1*/
     jeu = declarerJeu();
-    initialiserNiveau(jeu, niveau);
     
     principal(jeu);
     
