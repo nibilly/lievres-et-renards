@@ -92,11 +92,6 @@ void deplacer(jeu_t * jeu, objet_t objet, int numero, int ligne, int colonne)
                 strcpy(jeu->plateau[jeu->renards[numero].queue->ligne][jeu->renards[numero].queue->colonne], "R");
                 strcat(jeu->plateau[jeu->renards[numero].queue->ligne][jeu->renards[numero].queue->colonne], num);
                 break;
-            case CHAMPIGNON :
-                jeu->champignons[numero].position->ligne = ligne;
-                jeu->champignons[numero].position->colonne = colonne;
-                strcpy(jeu->plateau[ligne][colonne], "C ");
-                break;
             default :
                 printf("Objet non deplaçable ici\n");
         }
@@ -241,7 +236,7 @@ int verifLapin(jeu_t * jeu, int numero, int ligne, int colonne)
 
 /*on vérifie que tous les lapins sont sauvés
 Sortie : 1 si la partie est gagnée et 0 si on a perdue*/
-int estgagne(jeu_t * jeu)
+int estGagne(jeu_t * jeu)
 {
     int i, gagne = 1;
     for(i = 0 ; i<3 ; i++)
@@ -258,13 +253,13 @@ int estgagne(jeu_t * jeu)
 /*Permet de jouer au jeu textuellement
 Affiche en boucle le plateau et un menu de choix
 Le joueur saisi au clavier ce quiest demandé*/
-void moteurjeu(jeu_t * jeu, int niveau)
+void moteurJeu(jeu_t * jeu, int niveau)
 {
     int choix;
     int ligne;
     int colonne;
     int quitter = 0;
-    while(0==estgagne(jeu)&&0==quitter) /*tant que tout les lapins ne sont pas sauvés ou que le joueur na pas souhaité quitte le jeu*/
+    while(0==estGagne(jeu)&&0==quitter) /*tant que tout les lapins ne sont pas sauvés ou que le joueur na pas souhaité quitte le jeu*/
     {
         afficher(jeu);
         printf("------Menu------\n");

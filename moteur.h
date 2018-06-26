@@ -11,7 +11,7 @@ int verifplateau (int ligne, int colonne);
 int verifPasObstacle(jeu_t * jeu, int ligne, int colonne);
 int verifLapin(jeu_t * jeu, int numero, int ligne, int colonne);
 
-void moteurjeu(jeu_t * jeu, int niveau);
-int estgagne(jeu_t * jeu);
+void moteurJeu(jeu_t * jeu, int niveau);
+int estGagne(jeu_t * jeu);
 
 #endif
