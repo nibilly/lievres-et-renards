@@ -2,6 +2,7 @@
 #include <time.h>
 #include "visuel.h"
 #include "initialisation.h"
+#include "moteur.h"
 
 void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 {
@@ -101,6 +102,7 @@ void cliqueSourisN(int x, int y, jeu_t * jeu, SDL_Window ** pwindow, SDL_Rendere
 		}
 		niveau = dizaine*10+unite;
 		initialiserNiveau(jeu, niveau-1);
+		afficher(jeu);
 		
 		fenetre(pwindow2, 500, 600);
 	    *prenderer2 = SDL_CreateRenderer(*pwindow2, -1, SDL_RENDERER_ACCELERATED);
