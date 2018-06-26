@@ -117,26 +117,16 @@ void plateau(SDL_Renderer ** prenderer, jeu_t * jeu)
 	int cmpt0 = 0;
 	int cmpt1= 0;
 
-	SDL_Rect *rect;
-	SDL_Texture  *avatar;
+	 
 	SDL_Surface *plateau = NULL;
 	SDL_Surface *figurine = NULL;
-	
-/*chargement des images avec vérifications*/	
+		
 	plateau=IMG_Load("plateau.png");
 	if(!plateau) {
 		printf("IMG_Load: %s\n", IMG_GetError());
 	}
-	avatar = SDL_CreateTextureFromSurface(*prenderer, plateau);
-	SDL_FreeSurface(plateau);
+	affichefig (prenderer, plateau, 0, 100, 500, 500);
 	
-	rect = malloc(sizeof(SDL_Rect));
-	rect->x = 0;
-	rect->y = 100;
-	rect->w = 500;
-	rect->h = 500;
-	SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-	free(rect);
 	for(ligne=0;ligne<=4;ligne++)
 	{
 		for(colonne=0;colonne<=4;colonne++)
@@ -144,125 +134,58 @@ void plateau(SDL_Renderer ** prenderer, jeu_t * jeu)
 			if( strcmp(jeu->plateau[ligne][colonne], "L0")==0 )
 			{
 				figurine=IMG_Load("lapin0.png");
-				avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-				SDL_FreeSurface(figurine);
+				affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 100, 100);
 				
-				rect = malloc(sizeof(SDL_Rect));
-				rect->x= ligne*100;
-				rect->y = 100 + colonne*100;
-				rect->w=100;
-				rect->h=100;
-				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-				free(rect);
 			}
 			else if( strcmp(jeu->plateau[ligne][colonne], "L1")==0 )
 			{
 				figurine=IMG_Load("lapin1.png");
-				avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-				SDL_FreeSurface(figurine);
+				affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 100, 100);
 				
-				rect = malloc(sizeof(SDL_Rect));
-				rect->x= ligne*100;
-				rect->y = 100 + colonne*100;
-				rect->w=100;
-				rect->h=100;
-				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-				free(rect);
 			}
 			else if (strcmp(jeu->plateau[ligne][colonne], "L2")==0 )
 			{
 				figurine=IMG_Load("lapin2.png");
-				avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-				SDL_FreeSurface(figurine);
+				affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 100, 100);
 				
-				rect = malloc(sizeof(SDL_Rect));
-				rect->x= ligne*100;
-				rect->y = 100 + colonne*100;
-				rect->w=100;
-				rect->h=100;
-				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-				free(rect);
 			}
 			else if (strcmp(jeu->plateau[ligne][colonne], "C ")==0 )
 			{
 				figurine=IMG_Load("champignon.png");
-				avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-				SDL_FreeSurface(figurine);
-				
-				rect = malloc(sizeof(SDL_Rect));
-				rect->x= ligne*100;
-				rect->y = 100 + colonne*100;
-				rect->w=100;
-				rect->h=100;
-				SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-				free(rect);
+				affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 100, 100);
 				
 			}
 			/* les renards*/
 			else if (strcmp(jeu->plateau[ligne][colonne], "R0")==0 && cmpt0 == 0)
 			{
-				if(ligne<4 && strcmp(jeu->plateau[ligne+1][colonne], "R0")==0) /*renard 0 est horizontale*/
-				{
-					figurine=IMG_Load("renardhorizontale.png");
-					avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-					SDL_FreeSurface(figurine);
-					
-					rect = malloc(sizeof(SDL_Rect));
-					rect->x= ligne*100;
-					rect->y = 100 + colonne*100;
-					rect->w=200;
-					rect->h=100;
-					SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-					free(rect);
-					
-				}
-				else /*renard 0 est verticale*/
+				if(ligne<4 && strcmp(jeu->plateau[ligne+1][colonne], "R0")==0) 
 				{
 					figurine=IMG_Load("renardverticale.png");
-					avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-					SDL_FreeSurface(figurine);
+					affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 100, 200);
+					 
 					
-					rect = malloc(sizeof(SDL_Rect));
-					rect->x= ligne*100;
-					rect->y = 100 + colonne*100;
-					rect->w=100;
-					rect->h=200;
-					SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-					free(rect);
+				}
+				else 
+				{
+					figurine=IMG_Load("renardhorizontale.png");
+					affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 200, 100);
+					
 					
 				}
 				cmpt0 = 1;
 			}
 			else if (strcmp(jeu->plateau[ligne][colonne], "R1")==0 && cmpt1 == 0)
 			{
-				if(ligne<4 && strcmp(jeu->plateau[ligne+1][colonne], "R1")==0) /*renard 1 est horizontale*/
-				{
-					figurine=IMG_Load("renardhorizontale.png");
-					avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-					SDL_FreeSurface(figurine);
-					
-					rect = malloc(sizeof(SDL_Rect));
-					rect->x= ligne*100;
-					rect->y = 100 + colonne*100;
-					rect->w=200;
-					rect->h=100;
-					SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-					free(rect);
-					
-				}
-				else /*renard 1 est verticale*/
+				if(ligne<4 && strcmp(jeu->plateau[ligne+1][colonne], "R1")==0) 
 				{
 					figurine=IMG_Load("renardverticale.png");
-					avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
-					SDL_FreeSurface(figurine);
+					affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 100, 200);
 					
-					rect = malloc(sizeof(SDL_Rect));
-					rect->x= ligne*100;
-					rect->y = 100 + colonne*100;
-					rect->w=100;
-					rect->h=200;
-					SDL_RenderCopy(*prenderer, avatar, NULL, rect);
-					free(rect);
+				}
+				else 
+				{
+					figurine=IMG_Load("renardhorizontale.png");
+					affichefig (prenderer, figurine, colonne*100, 100 + ligne*100, 200, 100);
 					
 				}
 				cmpt1 = 1;
@@ -275,6 +198,24 @@ void plateau(SDL_Renderer ** prenderer, jeu_t * jeu)
 	/* L'image a ete copiee dans le renderer qui sera plus tard affiche a l'ecran */
 	
 	SDL_RenderPresent(*prenderer);
+}
+
+void affichefig (SDL_Renderer ** prenderer, SDL_Surface *figurine, int x, int y, int w, int h)
+{
+	SDL_Rect *rect;
+	SDL_Texture  *avatar;
+	
+	avatar = SDL_CreateTextureFromSurface(*prenderer, figurine);
+	SDL_FreeSurface(figurine);
+	
+	rect = malloc(sizeof(SDL_Rect));
+	rect->x= x;
+	rect->y = y;
+	rect->w= w;
+	rect->h= h;
+	SDL_RenderCopy(*prenderer, avatar, NULL, rect);
+	free(rect);
+	
 }
 
 void principal(jeu_t * jeu)
