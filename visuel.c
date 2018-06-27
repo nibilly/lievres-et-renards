@@ -14,10 +14,12 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 {
 	SDL_Rect *rect;
 	int iW, iH, i, j;
+	int r, v, b;
 	SDL_Color     couleur  = {0, 0, 0, 255};
 	SDL_Surface * surf;
 	SDL_Texture * texture;
 	char num[5];
+	int numero;
 	
 	SDL_SetRenderDrawColor(*prenderer, 255, 255, 255, 0);
 	rect = malloc(sizeof(SDL_Rect));
@@ -44,12 +46,52 @@ void remplirFenetreN(SDL_Renderer **prenderer, TTF_Font *font)
 	{
 		for(j=1; j<11; j++)
 		{
-			sprintf(num, "%d", i*10+j);
+			numero = i*10+j;
+			sprintf(num, "%d", numero);
 			surf     = TTF_RenderText_Blended(font, num, couleur);
 			texture = SDL_CreateTextureFromSurface(*prenderer, surf);
 			SDL_QueryTexture(texture, NULL, NULL, &iW, &iH);
 			rect = malloc(sizeof(SDL_Rect));
-			SDL_SetRenderDrawColor(*prenderer, 0, 150, 150, 255);
+			if(numero<13)
+			{
+				r = 115;
+				v = 184;
+				b = 46;
+			}
+			else
+			{
+				if(numero<25)
+				{
+					r = 255;
+					v = 165;
+					b = 0;
+				}
+				else
+				{
+					if(numero<37)
+					{
+						r = 160;
+						v = 24;
+						b = 24;
+					}
+					else
+					{
+						if(numero<49)
+						{
+							r = 100;
+							v = 0;
+							b = 132;
+						}
+						else
+						{
+							r = 12;
+							v = 89;
+							b = 166;
+						}
+					}
+				}
+			}
+			SDL_SetRenderDrawColor(*prenderer, r, v, b, 255);
 			rect->x = 30*j+30;
 			rect->y = 30*(i+1)+30;
 			rect->w = iW;
