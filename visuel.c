@@ -19,7 +19,7 @@ SDL_Renderer * renderer3;
 void remplirFenetreN(TTF_Font *font)
 {
 	SDL_Rect *rect;
-	int iW, iH, i, j;
+	int iW, iH, i, j; /* fghdsghf*/
 	int r, v, b;
 	SDL_Color     couleur  = {0, 0, 0, 255};
 	SDL_Surface * surf;
