@@ -58,50 +58,42 @@ void remplirFenetreN(TTF_Font *font)
 			texture = SDL_CreateTextureFromSurface(renderer, surf);
 			SDL_QueryTexture(texture, NULL, NULL, &iW, &iH);
 			rect = malloc(sizeof(SDL_Rect));
-<<<<<<< HEAD
 			if(numero<13)
-			{
-				r = 115;
+			{	r = 115;
 				v = 184;
 				b = 46;
 			}
 			else
 			{
 				if(numero<25)
-				{
-					r = 255;
+				{	r = 255;
 					v = 165;
 					b = 0;
 				}
 				else
 				{
 					if(numero<37)
-					{
-						r = 160;
+					{	r = 160;
 						v = 24;
 						b = 24;
 					}
 					else
 					{
 						if(numero<49)
-						{
-							r = 100;
+						{	r = 100;
 							v = 0;
 							b = 132;
 						}
 						else
-						{
-							r = 12;
+						{	r = 12;
 							v = 89;
 							b = 166;
 						}
 					}
 				}
 			}
-			SDL_SetRenderDrawColor(*prenderer, r, v, b, 255);
-=======
-			SDL_SetRenderDrawColor(renderer, 0, 150, 150, 255);
->>>>>>> 9ebfed319bc7d461f4421ed070d26fd45df97768
+			SDL_SetRenderDrawColor(renderer, r, v, b, 255);
+
 			rect->x = 30*j+30;
 			rect->y = 30*(i+1)+30;
 			rect->w = iW;
@@ -279,7 +271,6 @@ void boutons()
 	SDL_Surface * surf;
 	SDL_Texture * texture;
 	TTF_Font * font2 = TTF_OpenFont("fake.receipt.ttf", 35);
-	
 	
 	surf     = TTF_RenderText_Blended(font2, "Quitter", couleur);
 	texture = SDL_CreateTextureFromSurface(renderer2, surf);
