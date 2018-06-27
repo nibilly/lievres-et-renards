@@ -39,6 +39,7 @@ typedef struct {
     char *** trous;/*tableau de cinq pointeurs sur cinq pointeurs de tableaux de deux char */
     char *** plateau;/*affichage*/
     int nbDeplacements;
+    int nbCoutsMin;
 }jeu_t;
 
 typedef struct {

@@ -101,12 +101,11 @@ void initialiserNiveau(jeu_t * jeu, int n)
     FILE * file = fopen("niveaux.txt", "r");
     if(file)
     {
-        
         int v1, v2, v3, v4;
         char c1;
         char num[5];/*le numero en chaine de caractères*/
-        fseek(file, 51 * n, SEEK_SET); /*pour aller sur la ligne du niveau choisie*/
-        for(i=1 ; i<9 ; i++)
+        fseek(file, 54 * n, SEEK_SET); /*pour aller sur la ligne du niveau choisie*/
+        for(i=1 ; i<10 ; i++)
         {
             if(i<4)
             {
@@ -115,17 +114,26 @@ void initialiserNiveau(jeu_t * jeu, int n)
             }
             else
             {
-                if(i>5)
+                if(i<6)
                 {
-                    fscanf(file, "%d %d\n", &v1, &v2); /*les coordonées du champignons*/
-                
+                    
+                	fscanf(file, "%d %d %d %d %c\n", &v1, &v2, &v3, &v4, &c1); /*les coordonées des têtes et queun du renard ainsi que le position verticale ou horizontale*/
                 }
                 else
                 {
-                    fscanf(file, "%d %d %d %d %c\n", &v1, &v2, &v3, &v4, &c1); /*les coordonées des têtes et queun du renard ainsi que le position verticale ou horizontale*/
+                	if(i <9)
+                	{
+                		fscanf(file, "%d %d\n", &v1, &v2); /*les coordonées du champignons*/
+                		printf("yo\n");
+                	}
+                	else
+                	{
+                		fscanf(file, "%d\n", &(jeu->nbCoutsMin));
+                	}
+                    
                 }
             }
-            if(v1 != 5)
+            if(v1 != 5 && i<9)
             {
                 switch(i)
                 {
@@ -176,4 +184,5 @@ void initialiserNiveau(jeu_t * jeu, int n)
         }
         fclose(file);
     }
+    jeu->nbDeplacements = 0;
 }

@@ -12,9 +12,10 @@ void remplirFenetreN(TTF_Font *font);
 void fenetre(SDL_Window ** pwindow, int x, int y);
 void principal(jeu_t * jeu);
 void plateau(jeu_t * jeu);
-void affichefig (SDL_Surface *figurine, int x, int y, int w, int h);
+void affichefig (SDL_Surface **pfigurine, int x, int y, int w, int h);
 int cliqueSourisN(int x, int y, jeu_t * jeu);
 void cliquePlateau(int x, int y, jeu_t * jeu, TTF_Font * font, int niveau);
 void boutons();
+void victoire(TTF_Font * font, jeu_t * jeu);
 
 #endif

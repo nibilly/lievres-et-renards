@@ -52,6 +52,8 @@ void remplirFenetreN(TTF_Font *font)
 	{
 		for(j=1; j<11; j++)
 		{
+			SDL_DestroyTexture(texture);
+			SDL_FreeSurface(surf);
 			numero = i*10+j;
 			sprintf(num, "%d", numero);
 			surf     = TTF_RenderText_Blended(font, num, couleur);
@@ -102,10 +104,10 @@ void remplirFenetreN(TTF_Font *font)
 			SDL_RenderCopy(renderer, texture, NULL, rect);
 			free(rect);
 		}
-	}	
+	}
+	SDL_RenderPresent(renderer);
 	SDL_FreeSurface(surf);
 	SDL_DestroyTexture(texture);
-	SDL_RenderPresent(renderer);
 }
 
 void fenetre(SDL_Window ** pwindow, int x, int y)
@@ -121,11 +123,11 @@ void fenetre(SDL_Window ** pwindow, int x, int y)
 /*retourne le niveau*/
 int cliqueSourisN(int x, int y, jeu_t * jeu)
 {
-	int niveau, dizaine=0, unite=0;
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	int niveau = -1, dizaine=0, unite=0;
 	if(x>30 && x<360 && y>60 && y<240)
 	{
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(window);
 		x-=30;
 		while(x>29)
 		{
@@ -149,18 +151,25 @@ int cliqueSourisN(int x, int y, jeu_t * jeu)
 	return niveau;
 }
 
-void victoire()
+void victoire(TTF_Font * font, jeu_t * jeu)
 {
+	int iW, iH;
 	SDL_Rect *rect;
 	SDL_Texture  *avatar;
 	SDL_Surface *victoire = NULL;
+	SDL_Color     couleur  = {0, 0, 0, 255};
+	SDL_Surface * surf;
+	SDL_Texture * texture;
+	char resultat[255];
+	char resultat2[255];
+	
 	victoire=IMG_Load("victoire.png");
 		
 	SDL_DestroyRenderer(renderer2);
 	SDL_DestroyWindow(window2);
 	
 	etatFenetre = VICTOIRE;
-	fenetre(&window3, 400, 400);
+	fenetre(&window3, 400, 500);
 	renderer3 = SDL_CreateRenderer(window3, -1, SDL_RENDERER_ACCELERATED);
 	
 	avatar = SDL_CreateTextureFromSurface(renderer3, victoire);
@@ -174,8 +183,34 @@ void victoire()
 	SDL_RenderCopy(renderer3, avatar, NULL, rect);
 	free(rect);
 	
+	SDL_SetRenderDrawColor(renderer3, 255, 255, 255, 0);
+	rect = malloc(sizeof(SDL_Rect));
+	rect->x = 0;
+	rect->y = 400;
+	rect->w = 400;
+	rect->h = 100;
+	SDL_RenderFillRect(renderer3, rect );
+	free(rect);
+	
+	sprintf(resultat, "%d deplacements effectues / ", jeu->nbDeplacements);
+	sprintf(resultat2, "%d minimums", jeu->nbCoutsMin);
+	strcat(resultat, resultat2);
+	surf     = TTF_RenderText_Blended(font, resultat, couleur);
+	texture = SDL_CreateTextureFromSurface(renderer3, surf);
+	SDL_FreeSurface(surf);
+	SDL_QueryTexture(texture, NULL, NULL, &iW, &iH);
+	rect = malloc(sizeof(SDL_Rect));
+	SDL_RenderFillRect(renderer3, rect);
+	rect->x = 0;
+	rect->y = 400;
+	rect->w = iW;
+	rect->h = iH;
+	SDL_RenderCopy(renderer3, texture, NULL, rect);
+	free(rect);
 	
 	SDL_RenderPresent(renderer3);
+	SDL_DestroyTexture(avatar);
+	SDL_DestroyTexture(texture);
 }
 
 void plateau(jeu_t * jeu)
@@ -188,12 +223,13 @@ void plateau(jeu_t * jeu)
 	 
 	SDL_Surface *plateau = NULL;
 	SDL_Surface *figurine = NULL;
+	SDL_RenderClear(renderer);
 		
 	plateau=IMG_Load("plateau.png");
 	if(!plateau) {
 		printf("IMG_Load: %s\n", IMG_GetError());
 	}
-	affichefig(plateau, 0, 100, 500, 500);
+	affichefig(&plateau, 0, 100, 500, 500);
 	
 	for(ligne=0;ligne<=4;ligne++)
 	{
@@ -202,26 +238,22 @@ void plateau(jeu_t * jeu)
 			if( strcmp(jeu->plateau[ligne][colonne], "L0")==0 )
 			{
 				figurine=IMG_Load("lapin0.png");
-				affichefig (figurine, colonne*100, 100 + ligne*100, 100, 100);
-				
+				affichefig (&figurine, colonne*100, 100 + ligne*100, 100, 100);
 			}
 			else if( strcmp(jeu->plateau[ligne][colonne], "L1")==0 )
 			{
 				figurine=IMG_Load("lapin1.png");
-				affichefig (figurine, colonne*100, 100 + ligne*100, 100, 100);
-				
+				affichefig (&figurine, colonne*100, 100 + ligne*100, 100, 100);
 			}
 			else if (strcmp(jeu->plateau[ligne][colonne], "L2")==0 )
 			{
 				figurine=IMG_Load("lapin2.png");
-				affichefig (figurine, colonne*100, 100 + ligne*100, 100, 100);
-				
+				affichefig (&figurine, colonne*100, 100 + ligne*100, 100, 100);
 			}
 			else if (strcmp(jeu->plateau[ligne][colonne], "C ")==0 )
 			{
 				figurine=IMG_Load("champignon.png");
-				affichefig (figurine, colonne*100, 100 + ligne*100, 100, 100);
-				
+				affichefig (&figurine, colonne*100, 100 + ligne*100, 100, 100);
 			}
 			/* les renards*/
 			else if (strcmp(jeu->plateau[ligne][colonne], "R0")==0 && cmpt0 == 0)
@@ -229,16 +261,13 @@ void plateau(jeu_t * jeu)
 				if(ligne<4 && strcmp(jeu->plateau[ligne+1][colonne], "R0")==0) 
 				{
 					figurine=IMG_Load("renardverticale.png");
-					affichefig (figurine, colonne*100, 100 + ligne*100, 100, 200);
-					 
+					affichefig (&figurine, colonne*100, 100 + ligne*100, 100, 200);
 					
 				}
 				else 
 				{
 					figurine=IMG_Load("renardhorizontale.png");
-					affichefig (figurine, colonne*100, 100 + ligne*100, 200, 100);
-					
-					
+					affichefig (&figurine, colonne*100, 100 + ligne*100, 200, 100);				
 				}
 				cmpt0 = 1;
 			}
@@ -247,19 +276,18 @@ void plateau(jeu_t * jeu)
 				if(ligne<4 && strcmp(jeu->plateau[ligne+1][colonne], "R1")==0) 
 				{
 					figurine=IMG_Load("renardverticale.png");
-					affichefig (figurine, colonne*100, 100 + ligne*100, 100, 200);
+					affichefig (&figurine, colonne*100, 100 + ligne*100, 100, 200);
 				}
 				else 
 				{
 					figurine=IMG_Load("renardhorizontale.png");
-					affichefig (figurine, colonne*100, 100 + ligne*100, 200, 100);	
+					affichefig (&figurine, colonne*100, 100 + ligne*100, 200, 100);	
 				}
 				cmpt1 = 1;
 			}
 		}
 	}
 	boutons();
-	
 	SDL_RenderPresent(renderer2);
 }
 
@@ -282,7 +310,9 @@ void boutons()
 	rect->w = iW;
 	rect->h = iH;
 	SDL_RenderCopy(renderer2, texture, NULL, rect);
-	free(rect);	
+	free(rect);
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surf);
 	
 	surf     = TTF_RenderText_Blended(font2, "Initialiser", couleur);
 	texture = SDL_CreateTextureFromSurface(renderer2, surf);
@@ -294,20 +324,19 @@ void boutons()
 	rect->w = iW;
 	rect->h = iH;
 	SDL_RenderCopy(renderer2, texture, NULL, rect);
-	free(rect);	
+	free(rect);
+	SDL_DestroyTexture(texture);
+	SDL_FreeSurface(surf);
 	
 	TTF_CloseFont(font2);
-	SDL_FreeSurface(surf);
-	SDL_DestroyTexture(texture);
 }
 
-void affichefig (SDL_Surface *figurine, int x, int y, int w, int h)
+void affichefig (SDL_Surface **pfigurine, int x, int y, int w, int h)
 {
 	SDL_Rect *rect;
 	SDL_Texture  *avatar;
 	
-	avatar = SDL_CreateTextureFromSurface(renderer2, figurine);
-	SDL_FreeSurface(figurine);
+	avatar = SDL_CreateTextureFromSurface(renderer2, *pfigurine);
 	
 	rect = malloc(sizeof(SDL_Rect));
 	rect->x= x;
@@ -316,6 +345,8 @@ void affichefig (SDL_Surface *figurine, int x, int y, int w, int h)
 	rect->h= h;
 	SDL_RenderCopy(renderer2, avatar, NULL, rect);
 	free(rect);
+	SDL_DestroyTexture(avatar);
+	SDL_FreeSurface(*pfigurine);
 }
 
 void cliquePlateau(int x, int y, jeu_t * jeu, TTF_Font * font, int niveau)
@@ -354,7 +385,6 @@ void cliquePlateau(int x, int y, jeu_t * jeu, TTF_Font * font, int niveau)
 			colonne++;
 			x-=100;
 		}
-		
 		if(sourceExiste)
 		{
 			
@@ -400,11 +430,12 @@ void cliquePlateau(int x, int y, jeu_t * jeu, TTF_Font * font, int niveau)
 				}
 			}
 		}
+		if (estGagne(jeu))
+		{
+			victoire(font, jeu);
+		}
 	}
-	if (estGagne(jeu))
-	{
-		victoire();
-	}
+	
 }
 
 void principal(jeu_t * jeu)
@@ -451,6 +482,7 @@ void principal(jeu_t * jeu)
 					{
 						case SDL_WINDOWEVENT_CLOSE:
 							printf("appui sur la croix\n");
+							running = 0;
 							break;
 						case SDL_WINDOWEVENT_SIZE_CHANGED:
 							width = event.window.data1;

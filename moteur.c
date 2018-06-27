@@ -27,6 +27,7 @@ void deplacer(jeu_t * jeu, objet_t objet, int numero, int ligne, int colonne)
             case LAPIN :
                 if(verifLapin(jeu, numero, ligne, colonne))
                 {
+                	jeu->nbDeplacements++;
                     ancienneLigne = jeu->lapins[numero].position->ligne;
                     ancienneColonne = jeu->lapins[numero].position->colonne;
                     
@@ -48,6 +49,7 @@ void deplacer(jeu_t * jeu, objet_t objet, int numero, int ligne, int colonne)
                 break;
                 
             case RENARD :
+            	jeu->nbDeplacements++;
                 ancienneLigne = jeu->renards[numero].tete->ligne;
                 ancienneColonne = jeu->renards[numero].tete->colonne;
                 ancienneLigne2 = jeu->renards[numero].queue->ligne;
@@ -65,6 +67,14 @@ void deplacer(jeu_t * jeu, objet_t objet, int numero, int ligne, int colonne)
                     {
                         diff = diffTete;
                     }
+                    if(diff<0)
+                    {
+                    	diff = -1;
+                    }
+                    else
+                    {
+                    	diff = 1;
+                    }
                     jeu->renards[numero].tete->ligne -= diff;
                     jeu->renards[numero].queue->ligne -= diff;
                 }
@@ -74,11 +84,19 @@ void deplacer(jeu_t * jeu, objet_t objet, int numero, int ligne, int colonne)
                     diffQueue = ancienneColonne2 - colonne;
                     if(diffQueue <= 0)
                     {
-                        diff = diffQueue;
+                        diff = diffTete;
                     }
                     else
                     {
-                        diff = diffTete;
+                        diff = diffQueue;
+                    }
+                    if(diff<0)
+                    {
+                    	diff = -1;
+                    }
+                    else
+                    {
+                    	diff = 1;
                     }
                     jeu->renards[numero].tete->colonne -= diff;
                     jeu->renards[numero].queue->colonne -= diff;
