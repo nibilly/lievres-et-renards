@@ -56,7 +56,7 @@ void remplirFenetreN(TTF_Font *font)
 	SDL_RenderCopy(renderer, texture, NULL, rect);
 	free(rect);
 	
-	for(i =0; i<6; i/*6 lignes de dizaines*/
+	for(i =0; i<6; i++) /*6 lignes de dizaines*/
 	{
 		for(j=1; j<11; j++)/*10 colonnes de unites : de 1 a 10*/
 		{
