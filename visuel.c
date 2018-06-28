@@ -583,7 +583,7 @@ void principal(jeu_t * jeu)
 					running = 0;
 			}
 		}
-		SDL_Delay(10); /*delai minimal*/
+		SDL_Delay(10);
 	}
 	TTF_CloseFont(font);
 	switch(etatFenetre)
